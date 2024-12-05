@@ -7,6 +7,17 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+  <!-- Dropdown for selecting from_country (GBP or AED) -->
+  <select id="fromCountrySelect">
+    <option value="AED" selected>AED</option>
+    <option value="GBP">GBP</option>
+  </select>
+
+  <!-- Dropdown for selecting to_country (only INR) -->
+  <select id="toCountrySelect">
+    <option value="INR" selected>INR</option>
+  </select>
+
   <!-- Dropdown for selecting period -->
   <select id="periodSelect">
     <option value="1W">1 Week</option>
@@ -22,10 +33,10 @@
   <script>
     let myChartInstance = null;  // Store the chart instance
 
-    // Function to fetch Forex data from the API based on the selected period
-    async function fetchForexData(period) {
+    // Function to fetch Forex data from the API based on the selected parameters
+    async function fetchForexData(fromCountry, toCountry, period) {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/api/forex-data/?from_country=AED&to_country=INR&period=${period}`, {
+        const response = await fetch(`http://127.0.0.1:8000/api/forex-data/?from_country=${fromCountry}&to_country=${toCountry}&period=${period}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -117,14 +128,30 @@
       return date.toLocaleDateString('en-GB');  // Adjust as needed (en-GB for DD/MM/YYYY format)
     }
 
-    // Event listener for the dropdown to fetch data based on the selected period
-    document.getElementById('periodSelect').addEventListener('change', (event) => {
-      const selectedPeriod = event.target.value;
-      fetchForexData(selectedPeriod);  // Fetch new data based on the selected period
+    // Event listener for the dropdowns to fetch data based on the selected values
+    document.getElementById('fromCountrySelect').addEventListener('change', () => {
+      const fromCountry = document.getElementById('fromCountrySelect').value;
+      const toCountry = document.getElementById('toCountrySelect').value;
+      const period = document.getElementById('periodSelect').value;
+      fetchForexData(fromCountry, toCountry, period);  // Fetch new data based on the selected values
     });
 
-    // Fetch Forex data when the page loads with the default period (1 Month)
-    window.onload = () => fetchForexData('1M');
+    document.getElementById('toCountrySelect').addEventListener('change', () => {
+      const fromCountry = document.getElementById('fromCountrySelect').value;
+      const toCountry = document.getElementById('toCountrySelect').value;
+      const period = document.getElementById('periodSelect').value;
+      fetchForexData(fromCountry, toCountry, period);  // Fetch new data based on the selected values
+    });
+
+    document.getElementById('periodSelect').addEventListener('change', () => {
+      const fromCountry = document.getElementById('fromCountrySelect').value;
+      const toCountry = document.getElementById('toCountrySelect').value;
+      const period = document.getElementById('periodSelect').value;
+      fetchForexData(fromCountry, toCountry, period);  // Fetch new data based on the selected period
+    });
+
+    // Fetch Forex data when the page loads with the default selections (1M, AED to INR)
+    window.onload = () => fetchForexData('AED', 'INR', '1M');
   </script>
 </body>
 </html>
