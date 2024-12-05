@@ -1,12 +1,13 @@
 from app.db import Quote, get_db
 from app.core import settings
 from app.utils import logger
+from .scraper import Scraper
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func, delete
 
 from datetime import timedelta, datetime
-from .scraper import Scraper
 import traceback
 
 async def periodic_task():

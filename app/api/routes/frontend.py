@@ -1,6 +1,8 @@
 from app.utils import logger
+
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
+
 import traceback
 
 router = APIRouter()
