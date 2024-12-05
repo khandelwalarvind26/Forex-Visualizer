@@ -1,10 +1,11 @@
-from app.api.routes import forex_data
+from app.api.routes import forex_data, frontend
 from app.db import create_tables
 from app.services import periodic_task
-from contextlib import asynccontextmanager
-from fastapi.middleware.cors import CORSMiddleware
 
+from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI
+
+from contextlib import asynccontextmanager
 import aiocron
 
 # Wrapper to run async function
@@ -14,6 +15,8 @@ async def run_async_task():
 
     await periodic_task()
 
+
+# Fuctions to run on startup
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     '''Create tables and run cron job on startup'''
@@ -28,18 +31,11 @@ async def lifespan(app: FastAPI):
     
     yield  # The point at which the application runs
 
-
 app = FastAPI(lifespan=lifespan)
 
-# Define origins and middleware
-origins = ["*"]  # Allow from all origins for dev purposes, change this
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Serve the static files (e.g., HTML, JS, CSS) from the "static" directory
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
+# Include routes
 app.include_router(forex_data.router, prefix="/api/forex-data")
-
+app.include_router(frontend.router)
