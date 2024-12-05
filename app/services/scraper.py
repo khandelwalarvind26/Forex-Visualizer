@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from webdriver_manager.chrome import ChromeDriverManager
 
 from datetime import datetime
-import traceback, time
+import traceback, time, os
 from selenium.webdriver.chrome.options import Options
 
 from app.utils import QuoteDataEnum, logger
@@ -155,9 +155,22 @@ class Scraper:
             chrome_options.add_argument("--disable-logging")  # Disable Selenium logging
             chrome_options.add_argument("--log-level=3")     # Set Chrome log level to FATAL
             chrome_options.page_load_strategy = "none"
+            
+            # Get chromedriver path
+            chromedriver_path = ChromeDriverManager().install()
 
-            service = Service(ChromeDriverManager().install())
+            # If wrong path fix it
+            if 'THIRD_PARTY_NOTICES.chromedriver' in chromedriver_path:
+                chromedriver_path = chromedriver_path.replace('THIRD_PARTY_NOTICES.chromedriver', 'chromedriver')
+            logger.info(chromedriver_path)
 
+            # Make path executable
+            os.chmod(chromedriver_path, 0o755)
+
+            # Get the service
+            service = Service(chromedriver_path)
+
+            # Get driver
             driver = webdriver.Chrome(service=service, options=chrome_options)
 
             return driver
