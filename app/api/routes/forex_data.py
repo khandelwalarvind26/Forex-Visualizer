@@ -7,7 +7,7 @@ from sqlalchemy.future import select
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import traceback
 
 router = APIRouter()
@@ -18,7 +18,7 @@ async def forex_data(from_country: str, to_country: str, period: str, db: AsyncS
 
     try:
         current_time = datetime.now()
-        limit_time = current_time - parse_period(period)
+        limit_time = current_time - timedelta(days=parse_period(period))
 
         query = select(Quote).filter(
             Quote.from_country == from_country,

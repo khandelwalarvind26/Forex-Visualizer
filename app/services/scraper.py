@@ -30,7 +30,7 @@ class Scraper:
         
         try:
             async for db in get_db():
-                await db.add_all(self.quotes)
+                db.add_all(self.quotes)
                 await db.commit()
 
         except Exception as _:
