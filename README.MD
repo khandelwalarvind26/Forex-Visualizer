@@ -63,7 +63,7 @@ Install the required Python packages:
 pip install -r requirements.txt
 ```
 
-### 4. Configure Environment Variables
+### 5. Configure Environment Variables
 Create a `.env` file in the root of the project (if it doesn’t already exist) and add your database URL:
 
 For in-memory DB
@@ -81,7 +81,7 @@ Add country pairs on which the indexes are to be fetched
 COUNTRY_COMBINATIONS=[["GBP", "INR"],["AED","INR"]]
 ```
 
-### 7. Start the Application
+### 6. Start the Application
 Start the FastAPI server:
 
 ```bash
