@@ -98,7 +98,7 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 
 2. Use the interactive **Swagger UI** to explore and test the endpoints.
 
-3. To access the frontend with the rendered chats go to the url `http://127.0.0.1:8000/`
+3. Frontend with the rendered chats available at [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ---
 
