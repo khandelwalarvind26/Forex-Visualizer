@@ -14,6 +14,8 @@ async def periodic_task():
     '''Function to be called every period to fetch data'''
     
     try:
+        logger.info(f"Starting periodic fetching task")
+
         # Current time at which the task is executed
         current_timestamp = datetime.now()
 
