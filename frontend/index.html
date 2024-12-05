@@ -7,12 +7,25 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+  <!-- Dropdown for selecting period -->
+  <select id="periodSelect">
+    <option value="1W">1 Week</option>
+    <option value="1M" selected>1 Month</option>
+    <option value="3M">3 Months</option>
+    <option value="6M">6 Months</option>
+    <option value="1Y">1 Year</option>
+  </select>
+
+  <!-- Canvas for the chart -->
   <canvas id="myChart" width="400" height="200"></canvas>
+
   <script>
-    // Function to fetch the Forex data from the POST API
-    async function fetchForexData() {
+    let myChartInstance = null;  // Store the chart instance
+
+    // Function to fetch Forex data from the API based on the selected period
+    async function fetchForexData(period) {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/forex-data/?from_country=AED&to_country=INR&period=1M', {
+        const response = await fetch(`http://127.0.0.1:8000/api/forex-data/?from_country=AED&to_country=INR&period=${period}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -41,13 +54,18 @@
 
     // Function to render the Chart.js line chart
     function renderChart(chartData) {
+      // Destroy the existing chart if it exists
+      if (myChartInstance) {
+        myChartInstance.destroy();
+      }
+
       const chartLabels = chartData.map(item => formatDate(item.date));  // Format date for chart labels
       const chartCloseData = chartData.map(item => item.close);
       const chartHighData = chartData.map(item => item.high);
       const chartLowData = chartData.map(item => item.low);
 
       const ctx = document.getElementById('myChart').getContext('2d');
-      const myChart = new Chart(ctx, {
+      myChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
           labels: chartLabels,
@@ -99,8 +117,14 @@
       return date.toLocaleDateString('en-GB');  // Adjust as needed (en-GB for DD/MM/YYYY format)
     }
 
-    // Fetch Forex data when the page loads
-    window.onload = fetchForexData;
+    // Event listener for the dropdown to fetch data based on the selected period
+    document.getElementById('periodSelect').addEventListener('change', (event) => {
+      const selectedPeriod = event.target.value;
+      fetchForexData(selectedPeriod);  // Fetch new data based on the selected period
+    });
+
+    // Fetch Forex data when the page loads with the default period (1 Month)
+    window.onload = () => fetchForexData('1M');
   </script>
 </body>
 </html>
