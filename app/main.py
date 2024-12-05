@@ -2,6 +2,7 @@ from app.api.routes import forex_data
 from app.db import create_tables
 from app.services import periodic_task
 from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi import FastAPI
 import aiocron
@@ -30,7 +31,15 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+# Define origins and middleware
+origins = ["*"]  # Allow from all origins for dev purposes, change this
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(forex_data.router, prefix="/api/forex-data")
-
-
 
