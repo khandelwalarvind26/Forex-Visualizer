@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forex Line Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <canvas id="myChart" width="400" height="200"></canvas>
+  <script>
+    // Function to fetch the Forex data from the POST API
+    async function fetchForexData() {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/forex-data/?from_country=AED&to_country=INR&period=1M', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+
+        const data = await response.json();
+        
+        // Check if data is an array and has the expected format
+        if (Array.isArray(data)) {
+          const chartData = data.map(item => ({
+            date: new Date(item.Quote.date),  // Convert to Date object
+            close: item.Quote.close,
+            high: item.Quote.high,
+            low: item.Quote.low
+          }));
+
+          renderChart(chartData);
+        } else {
+          console.error('Invalid data format:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    // Function to render the Chart.js line chart
+    function renderChart(chartData) {
+      const chartLabels = chartData.map(item => formatDate(item.date));  // Format date for chart labels
+      const chartCloseData = chartData.map(item => item.close);
+      const chartHighData = chartData.map(item => item.high);
+      const chartLowData = chartData.map(item => item.low);
+
+      const ctx = document.getElementById('myChart').getContext('2d');
+      const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartLabels,
+          datasets: [
+            {
+              label: 'Close Price',
+              data: chartCloseData,
+              borderColor: 'rgba(75, 192, 192, 1)',
+              fill: false
+            },
+            {
+              label: 'High Price',
+              data: chartHighData,
+              borderColor: 'rgba(255, 99, 132, 1)',
+              fill: false
+            },
+            {
+              label: 'Low Price',
+              data: chartLowData,
+              borderColor: 'rgba(153, 102, 255, 1)',
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              type: 'category',
+              title: {
+                display: true,
+                text: 'Date'
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Price (INR)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Function to format date for chart labels
+    function formatDate(date) {
+      // Format as 'MM/DD/YYYY' or any other desired format
+      return date.toLocaleDateString('en-GB');  // Adjust as needed (en-GB for DD/MM/YYYY format)
+    }
+
+    // Fetch Forex data when the page loads
+    window.onload = fetchForexData;
+  </script>
+</body>
+</html>
