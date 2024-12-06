@@ -4,7 +4,7 @@
 Web application that provides real-time Forex data visualization using dynamic line charts. It allows users to visualize the exchange rate trends between selected currencies over various periods.
 Built Using **FastAPI, Selenium, SQLAlchemy, sqlite, chart.js**.
 
-![](https://github.com/khandelwalarvind26/Forex-Visualizer/forex_visualiser.gif)
+![](https://github.com/khandelwalarvind26/Forex-Visualizer/blob/master/forex_visualiser.gif)
 
 ---
 
