@@ -39,19 +39,16 @@ async def periodic_task():
             return
         
         # Fetch all the entries betweem latest_timestamp and current_timestamp
-        scrapers = []
+        scraper = Scraper()
+
         for (from_country, to_country) in settings.COUNTRY_COMBINATIONS:
-            scrapers.append(
-                Scraper(from_country, to_country, latest_timestamp, current_timestamp)
-            )
 
-        for scraper in scrapers:
-
-            logger.info(f"Scraping {scraper.countries[0]} to {scraper.countries[1]}")
-            scraper.scrape()
+            logger.info(f"Scraping {from_country} to {to_country}")
+            scraper.scrape(from_country, to_country, latest_timestamp, current_timestamp)
 
             logger.info("Saving")
             await scraper.save()
+
 
         # Delete all older quote entries from db
         logger.info("Deleting older entries")

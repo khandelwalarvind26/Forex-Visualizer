@@ -13,12 +13,12 @@ import traceback, time, os
 class Scraper:
     
 
-    def __init__(self, from_country: str, to_country: str, from_date: datetime, to_date: datetime):  
+    def __init__(self):  
         '''Initialize with countries and dates'''
 
-        self.countries = (from_country, to_country)
-        self.dates = (from_date, to_date)
+        self.countries = None
         self.quotes = None
+        self.driver = self.get_driver()
     
 
     async def save(self):
@@ -34,16 +34,18 @@ class Scraper:
             logger.info(tb)
 
 
-    def scrape(self):
+    def scrape(self, from_country: str, to_country: str, from_date: datetime, to_date: datetime):
         '''Fetch all quotes wihtin the specified dates'''
 
         try:
             # Convert datetime values to integer timestamps
-            timestamps = (int(self.dates[0].timestamp()), int(self.dates[1].timestamp()))
+            timestamps = (int(from_date.timestamp()), int(to_date.timestamp()))
+            self.countries = (from_country, to_country)
 
             # Build url
             url = f"https://finance.yahoo.com/quote/{self.countries[0]}{self.countries[1]}%3DX/history/?period1={timestamps[0]}&period2={timestamps[1]}"
             
+
             page_source = self.get_page_source(url)
             self.quotes = self.parse_page_source(page_source)
 
@@ -57,11 +59,10 @@ class Scraper:
         try: 
 
             time1 = datetime.now()
-            driver = self.get_driver()
             logger.info("Driver started")
 
             # Load web page from url
-            driver.get(url) # tells selenium to load url on chrome driver
+            self.driver.get(url) # tells selenium to load url on chrome driver
 
             # Wait for 5 seconds before closing the web page, irresepective of load status
             time.sleep(5) 
@@ -70,14 +71,11 @@ class Scraper:
             logger.info(f"Done loading web page, Total time taken: {(time2 - time1).total_seconds()}")
 
             # Fetch full html source of current page
-            return driver.page_source
+            return self.driver.page_source
         
         except Exception as e:
             tb = traceback.format_exc()
             logger.info(tb)
-        
-        finally:
-            driver.quit()
 
 
     def parse_page_source(self, page_source):
@@ -146,7 +144,7 @@ class Scraper:
                 "profile.managed_default_content_settings.fonts": 2,  # Disable fonts
             }
             chrome_options.add_experimental_option("prefs", prefs)
-            chrome_options.add_argument("--headless=new")
+            # chrome_options.add_argument("--headless=new")
             chrome_options.add_argument("--no-sandbox") 
             chrome_options.add_argument("--disable-dev-shm-usage") 
             chrome_options.add_argument("--disable-gpu") # Disable GPU rendering
@@ -177,6 +175,12 @@ class Scraper:
         except Exception as _:
             tb = traceback.format_exc()
             logger.info(tb)
+
+    
+    # Destructor, quit driver
+    def __del__(self):
+        # if self.driver is not None:
+        self.driver.quit()
 
 
 # d1 = datetime.fromtimestamp(1725532296)
