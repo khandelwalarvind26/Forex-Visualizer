@@ -1,6 +1,7 @@
 from app.api.routes import forex_data, frontend
 from app.db import create_tables
 from app.services import periodic_task
+from app.utils import logger, run_async_in_thread
 
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI
@@ -13,7 +14,8 @@ import aiocron
 async def run_async_task():
     '''CronJob'''
 
-    await periodic_task()
+    logger.info("Starting periodic task in a separate thread")
+    run_async_in_thread(periodic_task())  # Pass the coroutine
 
 
 # Fuctions to run on startup

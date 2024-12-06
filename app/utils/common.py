@@ -1,4 +1,14 @@
 import enum
+import asyncio
+from threading import Thread
+
+# Helper function to run an async coroutine in a separate thread
+def run_async_in_thread(coro):
+    def runner():
+        asyncio.run(coro)
+    thread = Thread(target=runner, daemon=True)
+    thread.start()
+    return thread
 
 class QuoteDataEnum(enum.Enum):
     date = 0
