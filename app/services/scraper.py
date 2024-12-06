@@ -181,10 +181,3 @@ class Scraper:
     def __del__(self):
         # if self.driver is not None:
         self.driver.quit()
-
-
-# d1 = datetime.fromtimestamp(1725532296)
-# d2 = datetime.fromtimestamp(1734220800)
-
-# scraper_obj = Scraper('AED','INR',d1,d2)
-# scraper_obj.scrape()
