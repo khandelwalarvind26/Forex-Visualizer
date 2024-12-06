@@ -38,7 +38,7 @@ async def forex_data(from_country: str, to_country: str, period: str, db: AsyncS
 
     except Exception as _:
         tb = traceback.format_exc()
-        logger.error(tb)
+        print(tb)
         raise HTTPException(
             status_code=500,
             detail="Internal Server Error"
