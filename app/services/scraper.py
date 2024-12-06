@@ -144,7 +144,7 @@ class Scraper:
                 "profile.managed_default_content_settings.fonts": 2,  # Disable fonts
             }
             chrome_options.add_experimental_option("prefs", prefs)
-            # chrome_options.add_argument("--headless=new")
+            chrome_options.add_argument("--headless=new")
             chrome_options.add_argument("--no-sandbox") 
             chrome_options.add_argument("--disable-dev-shm-usage") 
             chrome_options.add_argument("--disable-gpu") # Disable GPU rendering
