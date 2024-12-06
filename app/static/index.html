@@ -48,10 +48,10 @@
         // Check if data is an array and has the expected format
         if (Array.isArray(data)) {
           const chartData = data.map(item => ({
-            date: new Date(item.Quote.date),  // Convert to Date object
-            close: item.Quote.close,
-            high: item.Quote.high,
-            low: item.Quote.low
+            date: new Date(item.date),  // Convert to Date object
+            close: item.close,
+            high: item.high,
+            low: item.low
           }));
 
           renderChart(chartData);

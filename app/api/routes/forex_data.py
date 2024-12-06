@@ -30,6 +30,9 @@ async def forex_data(from_country: str, to_country: str, period: str, db: AsyncS
         result = await db.execute(query)
         quotes = result.fetchall()
 
+        # Extract required object from tuple
+        quotes = [quote[0] for quote in quotes]
+        
         response = jsonable_encoder(quotes)
         return response
 
